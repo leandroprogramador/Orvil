@@ -32,8 +32,8 @@ public class LivrosActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livros);
         toolbar = findViewById(R.id.toolbar);
-//        tabLayout = findViewById(R.id.tab_layout);
-//        viewPager = findViewById(R.id.pager);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.pager);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Livros");
