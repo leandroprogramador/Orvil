@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ld_activityScreenTitles">
+        <item>Meus Livros</item>
+        <item>Perfil</item>
+        <item>Notas</item>
+        <item>Sair</item>
+
+    </string-array>
+
+    <array name="ld_activityScreenIcons">
+        <item>@drawable/book_open</item>
+        <item>@drawable/profile</item>
+        <item>@drawable/notes</item>
+        <item>@drawable/logout</item>
+
+    </array>
+
+</resources>

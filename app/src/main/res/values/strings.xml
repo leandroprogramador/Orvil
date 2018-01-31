@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Orvil</string>
+    <string name="iniciarsessao">Iniciar Sessão</string>
+    <string name="senha">Senha</string>
+    <string name="email">E-mail</string>
+    <string name="registre">Registre-se aqui</string>
+    <string name="entrarfb">Entrar com o Facebook</string>
+    <string name="esqueci">Esqueceu sua senha?</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+    <string name="lido">Lido</string>
+    <string name="lendo">Lendo</string>
+    <string name="lerei">Lerei</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_livros">LivrosActivity</string>
+
+
+</resources>
