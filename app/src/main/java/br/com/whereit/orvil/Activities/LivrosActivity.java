@@ -1,6 +1,8 @@
 package br.com.whereit.orvil.Activities;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -16,58 +18,39 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import br.com.whereit.orvil.Adapters.LivrosTabAdapter;
+import br.com.whereit.orvil.Fragments.LivrosFragment;
 import br.com.whereit.orvil.R;
 
 public class LivrosActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     Toolbar toolbar;
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    LivrosTabAdapter livrosTabAdapter;
     DrawerLayout drawer;
     NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livros);
         toolbar = findViewById(R.id.toolbar);
-        tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.pager);
+
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Livros");
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.inflateMenu(R.menu.activity_livros_drawer);
+//        navigationView.inflateMenu(R.menu.activity_livros_drawer);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Lendo"));
-        tabLayout.addTab(tabLayout.newTab().setText("Quero Ler"));
-        tabLayout.addTab(tabLayout.newTab().setText("Lidos"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
 
-        livrosTabAdapter = new LivrosTabAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setOffscreenPageLimit(3);
-        viewPager.setAdapter(livrosTabAdapter);
-
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(this);
     }
 
     @Override
@@ -91,55 +74,36 @@ public class LivrosActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (toggle.onOptionsItemSelected(item)) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        viewPager.setCurrentItem(tab.getPosition());
-
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        toggle.syncState();
+        super.onPostCreate(savedInstanceState, persistentState);
     }
 
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+        if(id == R.id.nav_livros){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new LivrosFragment(), "Principal").commit();
+        } else if(id == R.id.nav_sair){
+            finish();
+        }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
     }
 }
