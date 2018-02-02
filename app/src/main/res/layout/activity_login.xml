@@ -126,6 +126,7 @@
         android:padding="10dp"
         android:text="@string/facebook"
         android:textColor="@color/colorWhite"
+        android:onClick="loginWithFacebook"
         app:layout_constraintBaseline_toBaselineOf="@+id/btnGoogle"
         app:layout_constraintEnd_toStartOf="@+id/btnGoogle"
         android:elevation="@dimen/cardview_default_elevation"
