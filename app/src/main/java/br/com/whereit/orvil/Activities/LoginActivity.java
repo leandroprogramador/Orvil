@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import br.com.whereit.orvil.Adapters.LivrosCardAdapter;
+import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.Helper.SharedHelper;
 import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.R;
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginWithFacebook(View view){
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+        FacebookHelper.login(this);
     }
 
 

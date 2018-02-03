@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 
+import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -16,6 +17,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+//        String hash = FacebookHelper.generateHash(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

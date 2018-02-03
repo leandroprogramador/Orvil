@@ -7,6 +7,7 @@
         <item
             android:id="@+id/nav_livros"
             android:icon="@drawable/book_open_page_variant"
+            android:checked="true"
             android:title="Livros" />
         <item
             android:id="@+id/nav_notas"
