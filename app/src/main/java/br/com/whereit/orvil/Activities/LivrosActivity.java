@@ -1,5 +1,9 @@
 package br.com.whereit.orvil.Activities;
 
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -7,6 +11,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Base64;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,10 +23,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.login.Login;
+import com.facebook.login.LoginManager;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import br.com.whereit.orvil.Adapters.LivrosTabAdapter;
 import br.com.whereit.orvil.Fragments.LivrosFragment;
+import br.com.whereit.orvil.Helper.SharedHelper;
+import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.R;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LivrosActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -28,6 +55,11 @@ public class LivrosActivity extends AppCompatActivity
     DrawerLayout drawer;
     NavigationView navigationView;
     ActionBarDrawerToggle toggle;
+    View headerLayout;
+    TextView txtUser;
+    CircleImageView imgProfile;
+    User user = new User();
+    Gson gson = new Gson();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +82,41 @@ public class LivrosActivity extends AppCompatActivity
 //        navigationView.inflateMenu(R.menu.activity_livros_drawer);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
+        headerLayout = LayoutInflater.from(this).inflate(R.layout.nav_header_livros, navigationView);
+        txtUser = headerLayout.findViewById(R.id.txt_user);
+        imgProfile = headerLayout.findViewById(R.id.image_user);
+        if(Profile.getCurrentProfile() != null){
+            AccessToken accessToken = gson.fromJson(SharedHelper.getData(LivrosActivity.this,"accessToken"), AccessToken.class);
+            getUserDetailsFromFB(accessToken);
+        }
+
 
     }
+
+    public void getUserDetailsFromFB(AccessToken accessToken) {
+
+        GraphRequest req=GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                if(response != null) {
+                    Gson gson = new Gson();
+                    User user = gson.fromJson(object.toString(), User.class);
+                    txtUser.setText(user.getName());
+                    try {
+                        Picasso.with(LivrosActivity.this).load(object.getJSONObject("picture").getJSONObject("data").getString("url")).into(imgProfile);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,gender,birthday,picture");
+        req.setParameters(parameters);
+        req.executeAsync();
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -94,7 +159,12 @@ public class LivrosActivity extends AppCompatActivity
         if(id == R.id.nav_livros){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new LivrosFragment(), "Principal").commit();
         } else if(id == R.id.nav_sair){
-            finish();
+
+
+            if(AccessToken.getCurrentAccessToken() != null){
+                LoginManager.getInstance().logOut();
+            }
+           startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
 
         drawer.closeDrawer(GravityCompat.START);
