@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,6 +33,11 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -44,19 +50,22 @@ import java.security.NoSuchAlgorithmException;
 import br.com.whereit.orvil.Adapters.LivrosTabAdapter;
 import br.com.whereit.orvil.Fragments.LivrosFragment;
 import br.com.whereit.orvil.Helper.SharedHelper;
+import br.com.whereit.orvil.IFbData;
 import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static br.com.whereit.orvil.Helper.FacebookHelper.getUserDetailsFromFB;
+
 public class LivrosActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, IFbData{
 
     Toolbar toolbar;
     DrawerLayout drawer;
     NavigationView navigationView;
     ActionBarDrawerToggle toggle;
     View headerLayout;
-    TextView txtUser;
+    TextView txtUser, txtEmail;
     CircleImageView imgProfile;
     User user = new User();
     Gson gson = new Gson();
@@ -65,56 +74,46 @@ public class LivrosActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livros);
         toolbar = findViewById(R.id.toolbar);
-
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Livros");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        drawer = findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-//        navigationView.inflateMenu(R.menu.activity_livros_drawer);
+
+        configureNavigation();
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
-        headerLayout = LayoutInflater.from(this).inflate(R.layout.nav_header_livros, navigationView);
-        txtUser = headerLayout.findViewById(R.id.txt_user);
-        imgProfile = headerLayout.findViewById(R.id.image_user);
-        if(Profile.getCurrentProfile() != null){
-            AccessToken accessToken = gson.fromJson(SharedHelper.getData(LivrosActivity.this,"accessToken"), AccessToken.class);
-            getUserDetailsFromFB(accessToken);
-        }
+
 
 
     }
 
-    public void getUserDetailsFromFB(AccessToken accessToken) {
+    private void configureNavigation() {
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        GraphRequest req=GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-                if(response != null) {
-                    Gson gson = new Gson();
-                    User user = gson.fromJson(object.toString(), User.class);
-                    txtUser.setText(user.getName());
-                    try {
-                        Picasso.with(LivrosActivity.this).load(object.getJSONObject("picture").getJSONObject("data").getString("url")).into(imgProfile);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+        navigationView.setNavigationItemSelectedListener(this);
+        headerLayout = LayoutInflater.from(this).inflate(R.layout.nav_header_livros, navigationView);
+        txtUser = headerLayout.findViewById(R.id.txt_user);
+        txtEmail = headerLayout.findViewById(R.id.txt_email);
+        imgProfile = headerLayout.findViewById(R.id.image_user);
+        if(Profile.getCurrentProfile() != null){
+            AccessToken accessToken = gson.fromJson(SharedHelper.getData(LivrosActivity.this,"accessToken"), AccessToken.class);
+            getUserDetailsFromFB(accessToken, LivrosActivity.this);
+        }
 
-            }
-        });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,gender,birthday,picture");
-        req.setParameters(parameters);
-        req.executeAsync();
+        if(getIntent().getStringExtra("google_account") != null)
+        {
+            User user = gson.fromJson(getIntent().getStringExtra("google_account"), User.class);
+            txtUser.setText(user.getName());
+            txtEmail.setText(user.getEmail());
+            Picasso.with(LivrosActivity.this).load(user.getPicture()).into(imgProfile);
+        }
     }
 
 
@@ -164,6 +163,21 @@ public class LivrosActivity extends AppCompatActivity
             if(AccessToken.getCurrentAccessToken() != null){
                 LoginManager.getInstance().logOut();
             }
+            if(GoogleSignIn.getLastSignedInAccount(LivrosActivity.this )!= null){
+                GoogleSignInClient mGoogleSignInClient;
+                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestProfile()
+                        .build();
+                mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+                mGoogleSignInClient.signOut()
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                            }
+                        });
+            }
            startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
 
@@ -175,5 +189,13 @@ public class LivrosActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         toggle.syncState();
+    }
+
+    @Override
+    public void getUserData(User myUser) {
+        user = myUser;
+        txtUser.setText(user.getName());
+        txtEmail.setText(user.getEmail());
+        Picasso.with(LivrosActivity.this).load("https://graph.facebook.com/" + user.getFacebookUserId()+ "/picture?type=large").into(imgProfile);
     }
 }

@@ -7,7 +7,9 @@ import android.os.Bundle;
 
 import com.facebook.AccessToken;
 import com.facebook.Profile;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
+import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -16,10 +18,11 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+//        String hash = FacebookHelper.generateHash(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(Profile.getCurrentProfile() != null){
+                if(Profile.getCurrentProfile() != null || GoogleSignIn.getLastSignedInAccount(SplashActivity.this) != null){
                     startActivity(new Intent(SplashActivity.this, LivrosActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 } else{
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

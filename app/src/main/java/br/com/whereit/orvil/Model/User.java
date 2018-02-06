@@ -15,6 +15,7 @@ public class User {
     private String picture;
     @SerializedName("id")
     private String facebookUserId;
+    private String googleUserId;
     @SerializedName("birthday")
     private String birthDay;
     @SerializedName("gender")
@@ -66,5 +67,13 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getGoogleUserId() {
+        return googleUserId;
+    }
+
+    public void setGoogleUserId(String googleUserId) {
+        this.googleUserId = googleUserId;
     }
 }
