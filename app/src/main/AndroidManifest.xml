@@ -63,6 +63,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".Activities.SignInSteps.StepNameActivity"
+            android:label="@string/title_activity_cadastro"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".Activities.SignInSteps.StepEmailActivity" />
+        <activity android:name=".Activities.SignInSteps.StepBirthActivity" />
+        <activity android:name=".Activities.SignInSteps.StepPassActivity"></activity>
     </application>
 
 </manifest>
