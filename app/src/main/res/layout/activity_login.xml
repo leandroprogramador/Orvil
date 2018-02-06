@@ -141,9 +141,9 @@
         android:background="@color/google_button"
         android:drawableLeft="@drawable/google"
         android:padding="10dp"
+        android:onClick="loginWithGoogle"
         android:text="@string/google"
         android:elevation="@dimen/cardview_default_elevation"
-
         android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnFB"

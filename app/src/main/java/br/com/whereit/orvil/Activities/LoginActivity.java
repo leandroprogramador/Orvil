@@ -16,6 +16,12 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -31,15 +37,20 @@ import br.com.whereit.orvil.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
-    LivrosCardAdapter adapter;
+
     CallbackManager callbackManager;
-    User user = new User();
+    GoogleSignInClient googleSignInClient;
     Gson gson = new Gson();
+    int RC_SIGN_IN = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestProfile()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
 
         callbackManager = CallbackManager.Factory.create();
@@ -48,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 SharedHelper.saveData(LoginActivity.this,"accessToken", gson.toJson(loginResult.getAccessToken()));
                 startActivity(new Intent(LoginActivity.this, LivrosActivity.class));
-
 
             }
 
@@ -73,10 +83,35 @@ public class LoginActivity extends AppCompatActivity {
         FacebookHelper.login(this);
     }
 
+    public void loginWithGoogle(View view){
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> taskGoogleSignIn = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(taskGoogleSignIn);
+        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> taskGoogleSignIn) {
+        try{
+            GoogleSignInAccount account = taskGoogleSignIn.getResult(ApiException.class);
+            User user = new User();
+            user.setName(account.getDisplayName());
+            user.setEmail(account.getEmail());
+            user.setPicture(account.getPhotoUrl().toString());
+            user.setGoogleUserId(account.getId());
+            String accountJson = gson.toJson(user);
+            Intent intent = new Intent(this, LivrosActivity.class);
+            intent.putExtra("google_account", account);
+            startActivity(intent);
+        } catch (ApiException e){
+
+        }
     }
 }

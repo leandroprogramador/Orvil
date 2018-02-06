@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,6 +33,11 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -100,6 +106,14 @@ public class LivrosActivity extends AppCompatActivity
             AccessToken accessToken = gson.fromJson(SharedHelper.getData(LivrosActivity.this,"accessToken"), AccessToken.class);
             getUserDetailsFromFB(accessToken, LivrosActivity.this);
         }
+
+        if(getIntent().getStringExtra("google_account") != null)
+        {
+            User user = gson.fromJson(getIntent().getStringExtra("google_account"), User.class);
+            txtUser.setText(user.getName());
+            txtEmail.setText(user.getEmail());
+            Picasso.with(LivrosActivity.this).load(user.getPicture()).into(imgProfile);
+        }
     }
 
 
@@ -148,6 +162,21 @@ public class LivrosActivity extends AppCompatActivity
 
             if(AccessToken.getCurrentAccessToken() != null){
                 LoginManager.getInstance().logOut();
+            }
+            if(GoogleSignIn.getLastSignedInAccount(LivrosActivity.this )!= null){
+                GoogleSignInClient mGoogleSignInClient;
+                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestProfile()
+                        .build();
+                mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+                mGoogleSignInClient.signOut()
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                            }
+                        });
             }
            startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
