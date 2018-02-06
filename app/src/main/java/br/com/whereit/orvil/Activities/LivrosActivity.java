@@ -34,6 +34,7 @@ import com.facebook.Profile;
 import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,6 +50,8 @@ import java.security.NoSuchAlgorithmException;
 
 import br.com.whereit.orvil.Adapters.LivrosTabAdapter;
 import br.com.whereit.orvil.Fragments.LivrosFragment;
+import br.com.whereit.orvil.Helper.FacebookHelper;
+import br.com.whereit.orvil.Helper.GoogleSignInHelper;
 import br.com.whereit.orvil.Helper.SharedHelper;
 import br.com.whereit.orvil.IFbData;
 import br.com.whereit.orvil.Model.User;
@@ -81,13 +84,8 @@ public class LivrosActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Livros");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-
         configureNavigation();
-
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
-
-
 
     }
 
@@ -107,12 +105,17 @@ public class LivrosActivity extends AppCompatActivity
             getUserDetailsFromFB(accessToken, LivrosActivity.this);
         }
 
-        if(getIntent().getStringExtra("google_account") != null)
+        if(GoogleSignIn.getLastSignedInAccount(LivrosActivity.this) != null)
         {
-            User user = gson.fromJson(getIntent().getStringExtra("google_account"), User.class);
+            User user = GoogleSignInHelper.getUserData(this);
+            user.setName(user.getName());
+            user.setEmail(user.getEmail());
             txtUser.setText(user.getName());
             txtEmail.setText(user.getEmail());
-            Picasso.with(LivrosActivity.this).load(user.getPicture()).into(imgProfile);
+            if(user.getPicture() != null) {
+                user.setPicture(user.getPicture());
+                Picasso.with(LivrosActivity.this).load(user.getPicture()).into(imgProfile);
+            }
         }
     }
 
@@ -160,25 +163,15 @@ public class LivrosActivity extends AppCompatActivity
         } else if(id == R.id.nav_sair){
 
 
-            if(AccessToken.getCurrentAccessToken() != null){
-                LoginManager.getInstance().logOut();
+            if(FacebookHelper.isLogged()){
+                FacebookHelper.loggout();
+                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
-            if(GoogleSignIn.getLastSignedInAccount(LivrosActivity.this )!= null){
-                GoogleSignInClient mGoogleSignInClient;
-                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestEmail()
-                        .requestProfile()
-                        .build();
-                mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-                mGoogleSignInClient.signOut()
-                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                            }
-                        });
+            if(GoogleSignInHelper.isLogged(this)){
+                GoogleSignInHelper.loggout(LivrosActivity.this);
+                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
-           startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
         }
 
         drawer.closeDrawer(GravityCompat.START);

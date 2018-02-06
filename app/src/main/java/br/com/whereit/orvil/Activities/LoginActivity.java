@@ -31,6 +31,7 @@ import java.util.Arrays;
 
 import br.com.whereit.orvil.Adapters.LivrosCardAdapter;
 import br.com.whereit.orvil.Helper.FacebookHelper;
+import br.com.whereit.orvil.Helper.GoogleSignInHelper;
 import br.com.whereit.orvil.Helper.SharedHelper;
 import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.R;
@@ -39,18 +40,14 @@ public class LoginActivity extends AppCompatActivity {
 
 
     CallbackManager callbackManager;
-    GoogleSignInClient googleSignInClient;
+    GoogleSignInHelper googleSignInHelper;
     Gson gson = new Gson();
-    int RC_SIGN_IN = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .build();
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+        googleSignInHelper = new GoogleSignInHelper(LoginActivity.this);
 
 
         callbackManager = CallbackManager.Factory.create();
@@ -84,34 +81,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginWithGoogle(View view){
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        Intent signInIntent = googleSignInHelper.getSignInIntent();
+        startActivityForResult(signInIntent, googleSignInHelper.RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode,resultCode,data);
-        if(requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> taskGoogleSignIn = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(taskGoogleSignIn);
+        if(requestCode == googleSignInHelper.RC_SIGN_IN) {
+            User user = googleSignInHelper.setUserData(data);
+            if(user !=null){
+                startActivity(new Intent(LoginActivity.this, LivrosActivity.class));
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> taskGoogleSignIn) {
-        try{
-            GoogleSignInAccount account = taskGoogleSignIn.getResult(ApiException.class);
-            User user = new User();
-            user.setName(account.getDisplayName());
-            user.setEmail(account.getEmail());
-            user.setPicture(account.getPhotoUrl().toString());
-            user.setGoogleUserId(account.getId());
-            String accountJson = gson.toJson(user);
-            Intent intent = new Intent(this, LivrosActivity.class);
-            intent.putExtra("google_account", account);
-            startActivity(intent);
-        } catch (ApiException e){
 
-        }
-    }
 }

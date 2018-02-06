@@ -12,7 +12,7 @@ public class User {
     @SerializedName("email")
     private String email;
     @SerializedName("picture")
-    private String picture;
+    private String picture = null;
     @SerializedName("id")
     private String facebookUserId;
     private String googleUserId;

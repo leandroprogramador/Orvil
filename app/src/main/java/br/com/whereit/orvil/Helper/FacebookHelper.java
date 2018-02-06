@@ -85,4 +85,12 @@ public class FacebookHelper {
         req.executeAsync();
 
     }
+
+    public static boolean isLogged(){
+        return AccessToken.getCurrentAccessToken() != null;
+    }
+
+    public static void loggout(){
+        LoginManager.getInstance().logOut();
+    }
 }

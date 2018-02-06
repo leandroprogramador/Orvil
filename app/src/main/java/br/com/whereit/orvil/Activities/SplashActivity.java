@@ -10,6 +10,7 @@ import com.facebook.Profile;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 import br.com.whereit.orvil.Helper.FacebookHelper;
+import br.com.whereit.orvil.Helper.GoogleSignInHelper;
 import br.com.whereit.orvil.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(Profile.getCurrentProfile() != null || GoogleSignIn.getLastSignedInAccount(SplashActivity.this) != null){
+                if(FacebookHelper.isLogged() || GoogleSignInHelper.isLogged(SplashActivity.this)){
                     startActivity(new Intent(SplashActivity.this, LivrosActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 } else{
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
