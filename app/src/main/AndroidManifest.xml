@@ -66,10 +66,17 @@
         <activity
             android:name=".Activities.SignInSteps.StepNameActivity"
             android:label="@string/title_activity_cadastro"
-            android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".Activities.SignInSteps.StepEmailActivity" />
-        <activity android:name=".Activities.SignInSteps.StepBirthActivity" />
-        <activity android:name=".Activities.SignInSteps.StepPassActivity"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.SignInSteps.StepEmailActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.SignInSteps.StepBirthActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.SignInSteps.StepPassActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Activities.SignInSteps.StepPhotoActivity"></activity>
     </application>
 
 </manifest>

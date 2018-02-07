@@ -2,11 +2,14 @@
 <resources>
     <color name="colorPrimary">#2196F3</color>
     <color name="colorPrimaryDark">#1976D2</color>
-    <color name="colorAccent">#009688</color>
+    <color name="colorPrimaryLight">#1976D2</color>
+    <color name="colorAccent">#448AFF</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="textDisabled">#AEB2B8</color>
     <color name="facebook_button">#303F9F</color>
+    <color name="facebook_button_light">#666ad1</color>
     <color name="google_button">#D32F2F</color>
+    <color name="google_button_light">#ff6659</color>
 
     <color name="black_overlay">#66000000</color>
 

@@ -51,4 +51,13 @@
     <string name="formato_senha">A senha deve possuir no mínimo 8 caracteres e conter números e letras.</string>
 
 
+    <string name="erro_name">Nome deve possuir pelo menos três caracteres.</string>
+    <string name="erro_email_size">Preencha o e-mail antes de continuar.</string>
+    <string name="erro_email_valid">Digite um e-mail válido.</string>
+    <string name="erro_date_valid">Selecione uma data válida.</string>
+    <string name="erro_senha">A senha deve possuir números e letras.</string>
+    <string name="erro_conf_senha">A confirmação deve ser igual a senha digitada.</string>
+    <string name="erro_senha_size">Escolha uma senha com pelo menos 8 caracteres.</string>
+
+
 </resources>
