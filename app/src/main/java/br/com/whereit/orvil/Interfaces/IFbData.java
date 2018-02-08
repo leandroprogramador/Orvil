@@ -1,4 +1,4 @@
-package br.com.whereit.orvil;
+package br.com.whereit.orvil.Interfaces;
 
 import br.com.whereit.orvil.Model.User;
 

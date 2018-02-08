@@ -58,6 +58,10 @@
     <string name="erro_senha">A senha deve possuir números e letras.</string>
     <string name="erro_conf_senha">A confirmação deve ser igual a senha digitada.</string>
     <string name="erro_senha_size">Escolha uma senha com pelo menos 8 caracteres.</string>
+    <string name="escolha_foto">Para finalizar, escolha uma foto bacana:</string>
+    <string name="pular">Pular</string>
+    <string name="camera">Câmera</string>
+    <string name="galeria">Galeria</string>
 
 
 </resources>

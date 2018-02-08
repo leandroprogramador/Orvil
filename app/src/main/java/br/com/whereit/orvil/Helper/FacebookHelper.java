@@ -7,14 +7,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
-import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,8 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import br.com.whereit.orvil.Activities.LivrosActivity;
-import br.com.whereit.orvil.IFbData;
+import br.com.whereit.orvil.Interfaces.IFbData;
 import br.com.whereit.orvil.Model.User;
 
 /**

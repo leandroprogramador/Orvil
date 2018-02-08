@@ -1,15 +1,15 @@
-package br.com.whereit.orvil;
+package br.com.whereit.orvil.Activities.SignInSteps;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
-public class LoginActivity extends AppCompatActivity {
+import br.com.whereit.orvil.R;
+
+public class StepFinishActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
+        setContentView(R.layout.activity_step_finish);
     }
 }
