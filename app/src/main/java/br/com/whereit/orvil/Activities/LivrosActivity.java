@@ -1,10 +1,10 @@
 package br.com.whereit.orvil.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,61 +14,84 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-import br.com.whereit.orvil.Adapters.LivrosTabAdapter;
+import com.facebook.AccessToken;
+import com.facebook.Profile;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
+import br.com.whereit.orvil.Fragments.LivrosFragment;
+import br.com.whereit.orvil.Helper.FacebookHelper;
+import br.com.whereit.orvil.Helper.GoogleSignInHelper;
+import br.com.whereit.orvil.Helper.SharedHelper;
+import br.com.whereit.orvil.Interfaces.IFbData;
+import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.R;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static br.com.whereit.orvil.Helper.FacebookHelper.getUserDetailsFromFB;
 
 public class LivrosActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, IFbData{
 
     Toolbar toolbar;
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    LivrosTabAdapter livrosTabAdapter;
     DrawerLayout drawer;
     NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
+    View headerLayout;
+    TextView txtUser, txtEmail;
+    CircleImageView imgProfile;
+    User user = new User();
+    Gson gson = new Gson();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livros);
         toolbar = findViewById(R.id.toolbar);
-        tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.pager);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Livros");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        configureNavigation();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+    }
 
-        drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+    private void configureNavigation() {
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.inflateMenu(R.menu.activity_livros_drawer);
+        headerLayout = LayoutInflater.from(this).inflate(R.layout.nav_header_livros, navigationView);
+        txtUser = headerLayout.findViewById(R.id.txt_user);
+        txtEmail = headerLayout.findViewById(R.id.txt_email);
+        imgProfile = headerLayout.findViewById(R.id.image_user);
+        if(Profile.getCurrentProfile() != null){
+            AccessToken accessToken = gson.fromJson(SharedHelper.getData(LivrosActivity.this,"accessToken"), AccessToken.class);
+            getUserDetailsFromFB(accessToken, LivrosActivity.this);
+        }
 
-        tabLayout.addTab(tabLayout.newTab().setText("Lendo"));
-        tabLayout.addTab(tabLayout.newTab().setText("Quero Ler"));
-        tabLayout.addTab(tabLayout.newTab().setText("Lidos"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        livrosTabAdapter = new LivrosTabAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setOffscreenPageLimit(3);
-        viewPager.setAdapter(livrosTabAdapter);
-
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(this);
+        if(GoogleSignIn.getLastSignedInAccount(LivrosActivity.this) != null)
+        {
+            User user = GoogleSignInHelper.getUserData(this);
+            user.setName(user.getName());
+            user.setEmail(user.getEmail());
+            txtUser.setText(user.getName());
+            txtEmail.setText(user.getEmail());
+            if(user.getPicture() != null) {
+                user.setPicture(user.getPicture());
+                Picasso.with(LivrosActivity.this).load(user.getPicture()).into(imgProfile);
+            }
+        }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -91,55 +114,54 @@ public class LivrosActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (toggle.onOptionsItemSelected(item)) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        viewPager.setCurrentItem(tab.getPosition());
-
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        toggle.syncState();
+        super.onPostCreate(savedInstanceState, persistentState);
     }
 
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+        if(id == R.id.nav_livros){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new LivrosFragment(), "Principal").commit();
+        } else if(id == R.id.nav_sair){
+
+
+            if(FacebookHelper.isLogged()){
+                FacebookHelper.loggout();
+                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+            if(GoogleSignInHelper.isLogged(this)){
+                GoogleSignInHelper.loggout(LivrosActivity.this);
+                startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+
+        }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
+    }
+
+    @Override
+    public void getUserData(User myUser) {
+        user = myUser;
+        txtUser.setText(user.getName());
+        txtEmail.setText(user.getEmail());
+        Picasso.with(LivrosActivity.this).load("https://graph.facebook.com/" + user.getFacebookUserId()+ "/picture?type=large").into(imgProfile);
     }
 }
