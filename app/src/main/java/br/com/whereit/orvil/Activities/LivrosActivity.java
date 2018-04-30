@@ -18,10 +18,12 @@ import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.Profile;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import br.com.whereit.orvil.Activities.NewBookSteps.ChooseMethodActivity;
 import br.com.whereit.orvil.Fragments.LivrosFragment;
 import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.Helper.GoogleSignInHelper;
@@ -45,6 +47,7 @@ public class LivrosActivity extends AppCompatActivity
     CircleImageView imgProfile;
     User user = new User();
     Gson gson = new Gson();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +56,19 @@ public class LivrosActivity extends AppCompatActivity
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Livros");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         configureNavigation();
+
+
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, new LivrosFragment(), "Livros").commit();
 
     }
+
+
 
     private void configureNavigation() {
         toggle = new ActionBarDrawerToggle(
@@ -93,6 +101,7 @@ public class LivrosActivity extends AppCompatActivity
     }
 
 
+
     @Override
     public void onBackPressed() {
         if(drawer==null) {
@@ -108,7 +117,7 @@ public class LivrosActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.livros, menu);
+//        getMenuInflater().inflate(R.menu.livros, menu);
         return true;
     }
 

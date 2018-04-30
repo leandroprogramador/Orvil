@@ -77,7 +77,8 @@
             android:name=".Activities.SignInSteps.StepPassActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".Activities.SignInSteps.StepPhotoActivity" />
-        <activity android:name=".Activities.SignInSteps.StepFinishActivity"></activity>
+        <activity android:name=".Activities.SignInSteps.StepFinishActivity" />
+        <activity android:name=".Activities.NewBookSteps.ChooseMethodActivity"></activity>
     </application>
 
 </manifest>

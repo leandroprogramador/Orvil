@@ -62,6 +62,9 @@
     <string name="pular">Pular</string>
     <string name="camera">Câmera</string>
     <string name="galeria">Galeria</string>
+    <string name="como_encontrar">Como você prefere que a gente ache seu livro?</string>
+    <string name="status">status</string>
+    <string name="quero_ler">Quero Ler</string>
 
 
 </resources>
