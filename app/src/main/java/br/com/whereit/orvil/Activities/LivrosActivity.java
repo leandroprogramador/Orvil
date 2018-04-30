@@ -140,9 +140,11 @@ public class LivrosActivity extends AppCompatActivity
                 FacebookHelper.loggout();
                 startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
-            if(GoogleSignInHelper.isLogged(this)){
+            else if(GoogleSignInHelper.isLogged(this)){
                 GoogleSignInHelper.loggout(LivrosActivity.this);
                 startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            } else{
+                finish();
             }
 
         }

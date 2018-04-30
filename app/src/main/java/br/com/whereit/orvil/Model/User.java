@@ -12,16 +12,11 @@ public class User {
     @SerializedName("email")
     private String email;
     @SerializedName("picture")
-<<<<<<< HEAD
     private String picture;
     @SerializedName("id")
     private String facebookUserId;
-=======
-    private String picture = null;
     @SerializedName("id")
-    private String facebookUserId;
     private String googleUserId;
->>>>>>> 0ca229a41a1c54f5c3241b6fff65421785a6df30
     @SerializedName("birthday")
     private String birthDay;
     @SerializedName("gender")
@@ -74,8 +69,6 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
-<<<<<<< HEAD
-=======
 
     public String getGoogleUserId() {
         return googleUserId;
@@ -84,5 +77,5 @@ public class User {
     public void setGoogleUserId(String googleUserId) {
         this.googleUserId = googleUserId;
     }
->>>>>>> 0ca229a41a1c54f5c3241b6fff65421785a6df30
+
 }
