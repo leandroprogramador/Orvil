@@ -3,10 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Orvil.iml" filepath="$PROJECT_DIR$/Orvil.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../leani/OrvilAndroid/Orvil.iml" filepath="$PROJECT_DIR$/../../../../leani/OrvilAndroid/Orvil.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../jonas.vieira/StudioProjects/Orvil/OrvilAndroid.iml" filepath="$PROJECT_DIR$/../../../../jonas.vieira/StudioProjects/Orvil/OrvilAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../leani/OrvilAndroid/app/app.iml" filepath="$PROJECT_DIR$/../../../../leani/OrvilAndroid/app/app.iml" />
     </modules>
   </component>
 </project>
