@@ -1,6 +1,8 @@
 package br.com.whereit.orvil.Model.ModelRequest;
 
-public class LoginRetorno {
+import io.realm.RealmObject;
+
+public class LoginRetorno extends RealmObject{
     String error;
     String error_description;
     String access_token;
