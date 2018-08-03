@@ -19,6 +19,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import br.com.whereit.orvil.Activities.SignInSteps.StepNameActivity;
 import br.com.whereit.orvil.Helper.ConstantesHelper;
 import br.com.whereit.orvil.Helper.CookieBarHelper;
@@ -26,6 +28,7 @@ import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.Helper.GoogleSignInHelper;
 import br.com.whereit.orvil.Helper.SharedHelper;
 import br.com.whereit.orvil.Model.Login;
+import br.com.whereit.orvil.Model.ModelRequest.ErrorBody;
 import br.com.whereit.orvil.Model.ModelRequest.LoginRetorno;
 import br.com.whereit.orvil.Model.User;
 import br.com.whereit.orvil.OrvilApplication;
@@ -98,8 +101,16 @@ public class LoginActivity extends AppCompatActivity implements JsonRequest.Post
             OrvilApplication.loginService.createUser(login, new Callback<LoginRetorno>() {
                 @Override
                 public void onResponse(Call<LoginRetorno> call, Response<LoginRetorno> response) {
-                  if(response.body().getError_description() != null){
-                      CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...",response.body().getError_description());
+
+                    if(response.errorBody() != null){
+                        ErrorBody errorBody = null;
+                        try {
+                            errorBody = gson.fromJson(response.errorBody().string(), ErrorBody.class);
+                            CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...",errorBody.getError_description());
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                       progressBar.setVisibility(View.INVISIBLE);
                   } else{
                       progressBar.setVisibility(View.INVISIBLE);
