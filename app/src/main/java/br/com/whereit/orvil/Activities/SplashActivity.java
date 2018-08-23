@@ -10,6 +10,7 @@ import com.facebook.Profile;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
+import br.com.whereit.orvil.Data.LoginDao;
 import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.Helper.GoogleSignInHelper;
 
@@ -26,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(FacebookHelper.isLogged() || GoogleSignInHelper.isLogged(SplashActivity.this)){
+                if(FacebookHelper.isLogged() || GoogleSignInHelper.isLogged(SplashActivity.this) || LoginDao.exists()){
                     startActivity(new Intent(SplashActivity.this, LivrosActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 } else{
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

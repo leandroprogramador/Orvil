@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import br.com.whereit.orvil.Activities.SignInSteps.StepNameActivity;
+import br.com.whereit.orvil.Data.LoginDao;
 import br.com.whereit.orvil.Helper.ConstantesHelper;
 import br.com.whereit.orvil.Helper.CookieBarHelper;
 import br.com.whereit.orvil.Helper.FacebookHelper;
@@ -98,41 +99,52 @@ public class LoginActivity extends AppCompatActivity implements JsonRequest.Post
         else{
             progressBar.setVisibility(View.VISIBLE);
             Login login = new Login(user, senha, "password");
-            OrvilApplication.loginService.createUser(login, new Callback<LoginRetorno>() {
-                @Override
-                public void onResponse(Call<LoginRetorno> call, Response<LoginRetorno> response) {
-
-                    if(response.errorBody() != null){
-                        ErrorBody errorBody = null;
-                        try {
-                            errorBody = gson.fromJson(response.errorBody().string(), ErrorBody.class);
-                            CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...",errorBody.getError_description());
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                      progressBar.setVisibility(View.INVISIBLE);
-                  } else{
-                      progressBar.setVisibility(View.INVISIBLE);
-                      loginPasswordSuccess(response);
-                  }
-                }
-
-                @Override
-                public void onFailure(Call<LoginRetorno> call, Throwable t) {
-                    CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...", t.getMessage());
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            });
-
-
+            requestLogin(login);
 
 
         }
     }
 
-    private void loginPasswordSuccess(Response<LoginRetorno> response) {
-        startActivity(new Intent(LoginActivity.this, LivrosActivity.class));
+    private void requestLogin(Login login) {
+        OrvilApplication.loginService.createUser(login, new Callback<LoginRetorno>() {
+            @Override
+            public void onResponse(Call<LoginRetorno> call, Response<LoginRetorno> response) {
+
+                if(response.errorBody() != null){
+                    ErrorBody errorBody = null;
+                    try {
+                        errorBody = gson.fromJson(response.errorBody().string(), ErrorBody.class);
+                        CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...",errorBody.getError_description());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                  progressBar.setVisibility(View.INVISIBLE);
+              } else{
+                  progressBar.setVisibility(View.INVISIBLE);
+                  loginPasswordSuccess(response.body(), login);
+              }
+            }
+
+            @Override
+            public void onFailure(Call<LoginRetorno> call, Throwable t) {
+                CookieBarHelper.showCookieToast(LoginActivity.this, "Ops...", t.getMessage());
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void loginPasswordSuccess(LoginRetorno response, Login login) {
+        login.setPassword("");
+        login.setAccess_token(response.getAccess_token());
+        login.setToken_type(response.getToken_type());
+        login.setExpires_in(response.getExpires_in());
+        if(LoginDao.save(login)){
+            startActivity(new Intent(LoginActivity.this, LivrosActivity.class));
+        } else{
+            CookieBarHelper.showCookieToast(LoginActivity.this,"Ops...", "Não foi possível fazer o login. Por favor, tente novamente.");
+        }
+
 
     }
 
@@ -155,6 +167,7 @@ public class LoginActivity extends AppCompatActivity implements JsonRequest.Post
         if(requestCode == googleSignInHelper.RC_SIGN_IN) {
             User user = googleSignInHelper.setUserData(data);
             if(user !=null){
+//                Login login = new Login(user.getEmail(), "", "google");
                 startActivity(new Intent(LoginActivity.this, LivrosActivity.class));
             }
         }

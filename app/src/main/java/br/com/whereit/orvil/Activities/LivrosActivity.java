@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import br.com.whereit.orvil.Activities.NewBookSteps.ChooseMethodActivity;
+import br.com.whereit.orvil.Data.LoginDao;
 import br.com.whereit.orvil.Fragments.LivrosFragment;
 import br.com.whereit.orvil.Helper.FacebookHelper;
 import br.com.whereit.orvil.Helper.GoogleSignInHelper;
@@ -153,6 +154,7 @@ public class LivrosActivity extends AppCompatActivity
                 GoogleSignInHelper.loggout(LivrosActivity.this);
                 startActivity(new Intent(LivrosActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             } else{
+                LoginDao.deleteAll();
                 finish();
             }
 

@@ -1,9 +1,11 @@
 package br.com.whereit.orvil.Activities.NewBookSteps;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import br.com.whereit.orvil.R;
 
@@ -27,5 +29,9 @@ public class ChooseMethodActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    public void openIsbn(View view) {
+        startActivity(new Intent(ChooseMethodActivity.this, SearchISBNActivity.class));
     }
 }

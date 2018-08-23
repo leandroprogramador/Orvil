@@ -65,6 +65,16 @@
     <string name="como_encontrar">Como você prefere que a gente ache seu livro?</string>
     <string name="status">status</string>
     <string name="quero_ler">Quero Ler</string>
+    <string name="digite_isbn">Digite o ISBN ou click no ícone de camera para ler o código de barras:</string>
+    <string name="isbn">ISBN</string>
+    <string name="pesquisar">Pesquisar</string>
+    <string name="aproxime_camera">Aproxime a câmera para fazer a leitura do código:</string>
+    <string name="editora">Editora:</string>
+    <string name="categoria">Categoria:</string>
+    <string name="ano">Ano:</string>
+    <string name="descricao">Descrição</string>
+    <string name="paginas">Páginas:</string>
+    <string name="idioma">Idioma:</string>
 
 
 </resources>

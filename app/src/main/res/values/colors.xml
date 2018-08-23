@@ -12,6 +12,8 @@
     <color name="google_button_light">#ff6659</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="colorTextBlack">#212121</color>
+    <color name="colorTextSecondary">#757575</color>
 
 
 </resources>
